@@ -1,0 +1,247 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Liste des Commandes</h4>
+                <button type="button" data-bs-toggle="modal" data-bs-target="#AddModal" class="btn btn-default btn-sm"><i class="fas fa-plus-circle"></i>Add new command</button>
+
+                <div class="table-responsive">
+                    <table class="table align-middle text-nowrap">
+                        <thead>
+                            <tr>
+                                <th class="text-dark font-medium fs-4">NumCommande</th>
+                                <th class="text-dark font-medium fs-4">DateCommande</th>
+                                <th class="text-dark font-medium fs-4">Client</th>
+                                <th class="text-dark font-medium fs-4">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody *ngFor='let commande of commandes'>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+
+                                        <div class="ms-3">
+                                            <h5 class="mb-0 font-medium">{{commande.numCmd}}</h5>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="fs-4">{{commande.dateCmd}}</td>
+                                <td>
+                                    <h5 class="mb-0 fw-normal">{{getClient(commande.client)}} {{this.nomCli}}</h5>
+                                </td>
+                                <td>
+                                    <h5 class="mb-0 fw-normal">
+                                        <button type="button" class="btn btn-default btn-sm"><i (click)="selectForDelete(commande.numCmd)" data-bs-toggle="modal" data-bs-target="#DeleteModal" class="fas fa-trash"></i></button>
+                                        <button type="button" class="btn btn-default btn-sm"><i  (click)="SelectForUpdate(commande.numCmd)" data-bs-toggle="modal" data-bs-target="#UpdateModal" class="fas fa-edit"></i></button>
+                                        <button type="button" class="btn btn-default btn-sm"><i (click)="show(commande.numCmd) " data-bs-toggle="modal" data-bs-target="#ShowModal" class="fas fa-eye"></i></button>
+
+                                    </h5>
+                                </td>
+
+                            </tr>
+                            <td *ngIf="idSelected==commande.numCmd && getshow()" colspan="4">
+                                <div class="table-active"> Lignes de commande
+                                    <h3><button type="button" data-bs-toggle="modal" data-bs-target="#AddModalligneCMD" class="btn btn-default btn-sm"><i class="fas fa-plus-circle"></i>Ajouter une nouvelle ligne</button>
+                                    </h3>
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">numLigne</th>
+                                                <th scope="col">Article</th>
+                                                <th scope="col">numCmd</th>
+                                                <th scope="col">qteStock</th>
+                                                <th scope="col">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor='let lcmd of l'>
+                                                <th scope="row">{{lcmd.numLigne}}</th>
+                                                <td>{{getArticle(lcmd.article)}} {{this.nomArt}}</td>
+                                                <td>{{lcmd.commande}}</td>
+                                                <td>{{lcmd.qteCmd}}</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-default btn-sm"><i (click)="selectForDelete_2(lcmd.numLigne)" data-bs-toggle="modal" data-bs-target="#DeleteModalLigne" class="fas fa-trash"></i></button>
+                                                    <button type="button" class="btn btn-default btn-sm"><i  (click)="SelectForUpdate_2(lcmd.numLigne)" data-bs-toggle="modal" data-bs-target="#updateModalligneCMD" class="fas fa-edit"></i></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Model for add product-->
+<div class="modal fade" id="AddModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Commande</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+
+                    <div class="row">
+                        <div class="col">
+                            <label>Date commande: </label>
+                            <input type="date" id="nomSte" class="form-control" name="nomSte" [(ngModel)]="commande.dateCmd">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label>Client: </label>
+                        <select class="form-control" id="fournisseur" name="fournisseur" [(ngModel)]="commande.client.codCli">
+                      <option *ngFor="let client of clients" value="{{client.codCli}}">{{client.nomCli}} {{client.preCli}}</option>
+                        </select> </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="add()">Add Commande</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Model for delete product-->
+<div class="modal fade" id="DeleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Deleting Commande</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h2>are you want to delete this command ?</h2>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" (click)="deleteConform()">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Model for update product-->
+<div class="modal fade" id="UpdateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Update Command</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <input type="hidden" id="ucod" name="codCli">
+                    <div class="row">
+                        <div class="col">
+                            <label>DateCommande: </label>
+                            <input type="date" id="unom" class="form-control" name="nomCli">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label>Fournisseur: </label>
+                        <select class="form-control" id="fournisseur" name="fournisseur" [(ngModel)]="commande.client.codCli">
+                      <option *ngFor="let client of clients" value="{{client.codCli}}">{{client.nomCli}} {{client.preCli}}</option>
+                        </select> </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="update()">Update commande</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="AddModalligneCMD" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add LigneCommande</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+
+                    <div class="row">
+                        <div class="col">
+                            <label>Qte Cmd: </label>
+                            <input type="number" id="nomSte" class="form-control" name="nomSte" [(ngModel)]="lignecommande.qteCmd">
+                        </div>
+                    </div>
+
+                    <div class="row ">
+                        <label>Article: </label>
+                        <select class="form-control " id="fournisseur " name="fournisseur " [(ngModel)]="lignecommande.article.codArt ">
+                      <option *ngFor="let article of articles " value="{{article.codArt}} ">{{article.nomArt}}</option>
+                        </select> </div>
+
+                </div>
+            </div>
+            <div class="modal-footer ">
+                <button type="button " class="btn btn-secondary " data-bs-dismiss="modal ">Cancel</button>
+                <button type="button " class="btn btn-primary " data-bs-dismiss="modal " (click)="addLigne() ">Add Commande</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Model for delete product-->
+<div class="modal fade" id="DeleteModalLigne" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Deleting Commande</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h2>are you want to delete this command ?</h2>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" (click)="deleteConform_2()">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="updateModalligneCMD" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modifer LigneCommande</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+
+                    <div class="row">
+                        <div class="col">
+                            <label>Qte Cmd: </label>
+                            <input type="number" id="QteL" class="form-control" name="nomSte" [(ngModel)]="lignecommande.qteCmd">
+                        </div>
+                    </div>
+
+                    <div class="row ">
+                        <label>Article: </label>
+                        <select class="form-control " id="ucodeArc" name="ucodeArc" [(ngModel)]="lignecommande.article.codArt ">
+                      <option *ngFor="let article of articles " value="{{article.codArt}} ">{{article.nomArt}}</option>
+                        </select> </div>
+
+                </div>
+            </div>
+            <div class="modal-footer ">
+                <button type="button " class="btn btn-secondary " data-bs-dismiss="modal ">Cancel</button>
+                <button type="button " class="btn btn-primary " data-bs-dismiss="modal " (click)="update_2()" >Add Commande</button>
+            </div>
+        </div>
+    </div>
+</div>
